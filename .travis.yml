@@ -17,7 +17,7 @@ deploy:
   provider: releases
   api_key:
     secure: Dm3cstDf5aSzQyYqqA/F+JQPE9xMfCGphlcIFkX2RicCjnrJuynQT+sWJWdfxPQAAg7mMUTUovZlcGtIqfx3gzTUjq2WyuB48xy9vhm0IbNmBRvhgUfds5Qx8D89GKyaS03UlgZayG+2NwPeN0zAfjphSBG60nUmWAFTxiqgTGd4pVU5SSx/t95v4BeSg7NKz45VwOs6Ef2RWCCy5hnkd+Dz16/W10kXBXdoqNjc9iQuTc4h9Z263FG8OglG4TD4eZxJ1NuPxQvH9qyUJPpYoxuz8zgUtGg/383NCZ6PCXYwfsTyKVn1Eu1Go8BoTX+oDGpoB49lFU2S/j7lv0RoHoEG+7kVQfOp/J+850dNfsgHmaPhLGXpDxk7PnnhFNxdFQRi99i8F8Fina4jjhGgNSLERZ1Av+1AcWt/vzl76TEKpyBTQTpNS4I+jbHZkNFvIvKaXmlIJf1sU5cCXW+7S5k+fjMfjEl9pKv/s569o6ygZRiLSG+K1rzSh/YiZGphVYG1QsWA1kJkff+gZ2KNwLRFJjLFdyx0OVolG4jEkS0qUdGH5kvx+uswg9/LkfhnVlHpgJqbFTwL6LRZS6jkyC6U7XKal3GMzpobZgbGIcUoVC/20YYDenBa8e/4Ob2RoSv/xwpp5D7IZtPwZo72eWB8cjo5CQkyZuOmXgRS00E=
-  file: dof.tgz
+  file: dof-$TRAVIS_TAG.tgz
   on:
     repo: docker-forensics-toolkit/toolkit
     tags: true
