@@ -1,0 +1,4 @@
+- stage: Intall Dependencies
+  script: pipenv install --dev
+- stage: Test 
+  script: pipenv run pytest -p no:cacheprovider 

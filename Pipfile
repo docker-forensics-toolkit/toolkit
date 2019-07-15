@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+imagemounter = "*"
+awesome-slugify = "*"
+python-magic = "*"
+pytsk3 = "*"
+argcomplete = "*"
+
+[dev-packages]
+pytest = "*"
+pyinstaller = "*"
+coverage = "*"
+
+[requires]
+python_version = "3.6"
