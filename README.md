@@ -8,15 +8,17 @@ based on forensic HDD copies of the docker host system.
 
 * Mount a forensic image (courtesy of [the imagemounter library](https://github.com/ralphje/imagemounter))
 * List Containers and their settings
-* Mount a container file system 
+* Mount a container file system (overlay2)
 * Show container log files
-* List Container images
+* List Container images (overlay2)
 * Inspect build history of container images
 * Perform a timeline analysis of the container file system
 
 See [usage.md](USAGE.md) for a tour of the features.
 
 ## Development
+
+[git-lfs](https://git-lfs.github.com/) is required to check out this repository. Use whatever editor you like.
 
 ## Testing
 
