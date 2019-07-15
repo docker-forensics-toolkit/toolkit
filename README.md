@@ -1,10 +1,15 @@
-# dof - a docker forensics toolkit
-A toolkit for performing post-mortem analysis of Docker runtime environments
-based on forensic HDD copies of the docker host system.
+# A Docker forensics toolkit
+
+This repo contains a toolkit for performing post-mortem analysis of Docker
+runtime environments based on forensic HDD copies of the docker host system.
+
+<img alt="Logo" align="right" src="https://avatars2.githubusercontent.com/u/48415084">
 
 ![Build Status](https://api.travis-ci.org/docker-forensics-toolkit/toolkit.svg?branch=master)
 
 ## Features
+
+
 
 * Mount a forensic image (courtesy of [the imagemounter library](https://github.com/ralphje/imagemounter))
 * List Containers and their settings
