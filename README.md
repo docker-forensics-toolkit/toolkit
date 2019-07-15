@@ -2,6 +2,8 @@
 A toolkit for performing post-mortem analysis of Docker runtime environments
 based on forensic HDD copies of the docker host system.
 
+![Build Status](https://api.travis-ci.org/docker-forensics-toolkit/toolkit.svg?branch=master)
+
 ## Features
 
 * Mount a forensic image (courtesy of [the imagemounter library](https://github.com/ralphje/imagemounter))
