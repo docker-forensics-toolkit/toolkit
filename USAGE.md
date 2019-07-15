@@ -34,8 +34,13 @@ machine.
     
 The output will look like this: 
 
-    TODO: insert output
-    
+    Found Docker client with version: 18.09.7-ce at /tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root/usr/bin/docker
+    This host is not part of a Docker Swarm
+    1 containers running on this machine
+    2 total containers found on this machine
+    7 images found on this machine
+    3 images belong to no repository
+   
 ## Containers
 
 Now let's take a closer look at some of these containers that were running when the image was created.
@@ -45,27 +50,31 @@ Now let's take a closer look at some of these containers that were running when 
 The output will look like this:
 
     /apache
-    	ID: 25b0a6f529c117ffc47684b4749f3ef38c1d9b2dce5a1cd52513e05af9d11522
-    	State: running
-    	Created: 2019-06-28T11:11:08.347278022Z
-    	Image: httpd:2.4.38-alpine
-    	Image ID: sha256:0c388cccfd046fb7f46560e6605e128f0bd0c2bb2f5858b84b0f16d1497e32a6
-    	Entrypoint: None
-    	Storage Driver: overlay2
-    	Container Layer: /tmp/packer-virtualbox-iso-1561712912-disk001-4-root-2/var/lib/docker/overlay2/ab3480793a4d06555b3e7ac8f3ffef584bb3b3bdbffbc6e7e7e863768f849fa4/diff
-    	Ports: {'80/tcp': None}
-    
+        ID: aecd431674b621f3e591f76d8767038815386f5eee0473cdbe7f92bddd3a5510
+        State: running
+        Restart Policy: always
+        Created: 2019-07-13T19:59:20.704831548Z
+        Image: httpd:2.4.38-alpine
+        Image ID: sha256:0c388cccfd046fb7f46560e6605e128f0bd0c2bb2f5858b84b0f16d1497e32a6
+        Entrypoint: None
+        Command: ['httpd-foreground']
+        Storage Driver: overlay2
+        Container Layer: /tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root/var/lib/docker/overlay2/22bdb39984a1a2096b9c7adb2c53b7019ef073dcbfe6e43b2cdef27decb17aa5/diff
+        Ports: 80/tcp-><none>
+
     /mysql
-    	ID: c155196e5689cb7dd57f52ca9efeadc3d2d0be14e73245497909ba4c73f16f3f
-    	State: dead
-    	Created: 2019-06-28T11:11:28.802084249Z
-    	Image: mysql:8.0.16
-    	Image ID: sha256:c7109f74d339896c8e1a7526224f10a3197e7baf674ff03acbab387aa027882a
-    	Entrypoint: ['docker-entrypoint.sh']
-    	Storage Driver: overlay2
-    	Container Layer: /tmp/packer-virtualbox-iso-1561712912-disk001-4-root-2/var/lib/docker/overlay2/2f583c9efac3388f02acd4d8d30a271a805346dc0d8dd17613eab567d032b857/diff
-    	Ports: <none>
-    	Volume: Host folder '/var/mysql/datadir' mounted in in Container at '/var/lib/mysql'
+        ID: e5eaa7be1018890cd25f171779a4a0e40c50f1288046bdf2f62208b5a8e51447
+        State: dead
+        Restart Policy: no
+        Created: 2019-07-13T19:59:40.961954836Z
+        Image: mysql:8.0.16
+        Image ID: sha256:c7109f74d339896c8e1a7526224f10a3197e7baf674ff03acbab387aa027882a
+        Entrypoint: ['docker-entrypoint.sh']
+        Command: ['mysqld']
+        Storage Driver: overlay2
+        Container Layer: /tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root/var/lib/docker/overlay2/d7ad91741dc30e44c2db3a5290c6fa97326dd82be1b7458bd6d3d01fd52bc813/diff
+        Ports: <none>
+        Volume: Host folder '/var/mysql/datadir' mounted in in Container at '/var/lib/mysql'
 
 There's the one running container and the one that's dead. We also see more info about both containers. Let's inspect
 the apache container closer. Feel free to ignore the `/` in the container name, it's an artifact of the way Docker
@@ -169,6 +178,7 @@ The output will look like this:
         Tags: <none>
         Containers: <none>
 
+
     Images in Repository: httpd
         Id: 0c388cccfd046fb7f46560e6605e128f0bd0c2bb2f5858b84b0f16d1497e32a6
         Tags: httpd:2.4.38-alpine, httpd@sha256:eb8ccf084cf3e80eece1add239effefd171eb39adbc154d33c14260d905d4060
@@ -184,4 +194,19 @@ Images that don't belong to a Repository were not pulled from Docker Hub or a pr
 machine. They deserve some extra scrutiny. 
 
 Images without a corresponding container instance may indicate a deleted container.
+
+## Converting output for another tool
+
+The output of dof is easy to parse and use as input for another tool. For an example see the awk script [list-containers-to-csv.awk](list-containers-to-csv.awk). 
+
+Here's how you can use this script:
+
+    sudo dof list-containers /tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root | sudo tee | awk -f list-containers-to-csv.awk 
+    
+The output will look like this:
+    
+    NAME, ID, STATE, RESTART POLICY, CREATED, IMAGE, IMAGE ID, ENTRYPOINT, COMMAND, STORAGE DRIVER, CONTAINER LAYER, PORTS
+    /apache,aecd431674b621f3e591f76d8767038815386f5eee0473cdbe7f92bddd3a5510,running,always,2019-07-13T19:59:20.704831548Z,httpd:2.4.38-alpine,sha256:0c388cccfd046fb7f46560e6605e128f0bd0c2bb2f5858b84b0f16d1497e32a6,None,['httpd-foreground'],overlay2,/tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root/var/lib/docker/overlay2/22bdb39984a1a2096b9c7adb2c53b7019ef073dcbfe6e43b2cdef27decb17aa5/diff,80/tcp-><none>
+    /mysql,e5eaa7be1018890cd25f171779a4a0e40c50f1288046bdf2f62208b5a8e51447,dead,no,2019-07-13T19:59:40.961954836Z,mysql:8.0.16,sha256:c7109f74d339896c8e1a7526224f10a3197e7baf674ff03acbab387aa027882a,['docker-entrypoint.sh'],['mysqld'],overlay2,/tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root/var/lib/docker/overlay2/d7ad91741dc30e44c2db3a5290c6fa97326dd82be1b7458bd6d3d01fd52bc813/diff,<none>
+
 
