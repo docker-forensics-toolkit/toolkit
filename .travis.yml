@@ -2,7 +2,12 @@ language: python
 python:
   - "3.6"
 install:
-  - pipenv 
+  - pip install pipenv 
   - pipenv install --dev
 script:
   - pipenv run pytest
+
+addons:
+  apt:
+    packages:
+      - fakeroot
