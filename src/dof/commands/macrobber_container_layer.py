@@ -13,7 +13,7 @@ def run_macrobber_container_layer(args, image_mountpoint: Path, docker_home: Pat
 
     container = container_locator.container_by_name_or_id(container_name_or_id)
 
-    for line in mac_robber_folder(container.container_layer_upper_folder):
+    for line in mac_robber_folder(container.container_layer_folder):
         print(line)
 
 

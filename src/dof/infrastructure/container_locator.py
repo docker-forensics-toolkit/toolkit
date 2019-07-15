@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List
-from model.container import Container
+from model.container import Container, ConfigVersion
 from infrastructure.logging import warn
 
 
@@ -66,8 +66,14 @@ class ContainerLocator:
 
     def __container_from_folder(self, container_folder: Path) -> Container:
         """Constructs a container object from the given folders metadatata """
-        config_file = Container.read_container_config_file(container_folder)
-        return Container(self.docker_home, config_file)
+        if (container_folder / "config.v2.json").exists():
+            config_file = Container.from_v2_config(container_folder)
+            return Container(self.docker_home, config_file, ConfigVersion.Two)
+        elif (container_folder / "config.json").exists():
+            config_file = Container.from_v1_config(container_folder)
+            return Container(self.docker_home, config_file, ConfigVersion.One)
+        else:
+            raise RuntimeError("Unknown version of container config encountered.")
 
     def __all_container_folders(self) -> List[Path]:
         """Returns a list of folders that contain container metadata."""

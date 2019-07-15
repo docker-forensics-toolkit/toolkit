@@ -73,7 +73,7 @@ class ListContainerCommandLinearStyle(object):
         print(f"\tEntrypoint: {container.entrypoint}")
         print(f"\tCommand: {container.command}")
         print(f"\tStorage Driver: {container.storage_driver}")
-        print(f"\tContainer Layer: {container.container_layer_upper_folder}")
+        print(f"\tContainer Layer: {container.container_layer_folder}")
         if container.ports:
             print(f"\tPorts: {container.ports_to_string()}")
         else:

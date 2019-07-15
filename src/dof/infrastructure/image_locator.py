@@ -15,17 +15,23 @@ class ImageLocator:
 
     def __init__(self, docker_home: Path):
         self.docker_home = docker_home
+        if (self.docker_home / "image" / "overlay2").exists():
+            self.driver = "overlay2"
+        elif (self.docker_home / "image" / "aufs").exists():
+            self.driver = "aufs"
+        else:
+            raise RuntimeError("Unsupported Docker version or storage driver.")
 
-    def overlay_images_root_folder(self) -> Path:
-        return self.docker_home / "image" / "overlay2" / "imagedb" / "content" / "sha256"
+    def images_root_folder(self) -> Path:
+        return self.docker_home / "image" / self.driver / "imagedb" / "content" / "sha256"
 
     def repository_data_file(self) -> Path:
-        return self.docker_home / "image" / "overlay2" / "repositories.json"
+        return self.docker_home / "image" / self.driver / "repositories.json"
 
     def all_images(self) -> List[Image]:
         """Returns all the images."""
-        if not self.overlay_images_root_folder().exists():
-            raise RuntimeError(f"Images folder does not exist at: {str(self.overlay_images_root_folder())}. "
+        if not self.images_root_folder().exists():
+            raise RuntimeError(f"Images folder does not exist at: {str(self.images_root_folder())}. "
                             + "Are you sure this is a Docker Host?")
         return [self.__image_from_file(image_file) for image_file in self.__all_image_files()]
 
@@ -57,7 +63,7 @@ class ImageLocator:
         raise RuntimeError(f"No such image found with id: {id}")
 
     def __all_image_files(self) -> List[Path]:
-        return [file for file in self.overlay_images_root_folder().iterdir() if file.is_file()]
+        return [file for file in self.images_root_folder().iterdir() if file.is_file()]
 
     def __image_from_file(self, image_config_file) -> Image:
         image_tags, repository = self.__image_tags_and_name_from_repository_data(image_config_file.name)

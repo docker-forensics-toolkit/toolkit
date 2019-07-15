@@ -15,10 +15,8 @@ def test_locating_images(docker_home: Path):
 
 
 def test_locating_images_fails():
-    image_locator = ImageLocator(Path("/not/docker/"))
-
     with pytest.raises(RuntimeError):
-        image_locator.all_images()
+        ImageLocator(Path("/not/docker/"))
 
 
 def test_locating_images_by_tag(docker_home: Path):

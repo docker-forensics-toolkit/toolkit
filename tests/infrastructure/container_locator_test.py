@@ -44,11 +44,11 @@ def test_loading_container_by_name(docker_home: Path):
     assert apache_container.entrypoint is None
     assert apache_container.command == ["httpd-foreground"]
     assert apache_container.storage_driver_folder == docker_home / "overlay2"
-    assert apache_container.container_layer_upper_folder == \
+    assert apache_container.container_layer_folder == \
            docker_home / "overlay2" / apache_container.container_layer_id / "diff"
     assert apache_container.container_layer_work_folder == \
            docker_home / "overlay2" / apache_container.container_layer_id / "work"
-    assert apache_container.container_layer_lower_folders == "l/Q6RK3MBIY2MI3CL3JHWPJFBUNH:" \
+    assert apache_container.image_layer_folders == "l/Q6RK3MBIY2MI3CL3JHWPJFBUNH:" \
                                                              "l/6PQIU4AUXMUTWWXOXEAAEMBH4Y:" \
                                                              "l/YOHCGPDPMO6XYCX2J3YMVT4276:" \
                                                              "l/AZGTVIGVJYBXA74JPRZ6Z5DBBO:" \

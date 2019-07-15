@@ -1,6 +1,6 @@
 import collections
 import json
-from enum import Enum
+from enum import Enum, auto
 from pathlib import Path
 import subprocess
 from typing import List
@@ -8,16 +8,22 @@ from typing import List
 Volume = collections.namedtuple('Volume', 'source destination')
 
 
+class ConfigVersion(Enum):
+    One = auto()
+    Two = auto()
+
+
 class Container:
-    def __init__(self, docker_home: Path, config_file: dict):
+    def __init__(self, docker_home: Path, config_file: dict, config_version: ConfigVersion):
         self.docker_home = docker_home
         self.config_file = config_file
+        self.config_version = config_version
 
     def __eq__(self, other):
         return self.id == other.id
 
     @staticmethod
-    def read_container_config_file(container_folder: Path):
+    def from_v2_config(container_folder: Path):
         container_file = container_folder / "config.v2.json"
         with container_file.open() as file:
             container_config = json.load(file)
@@ -27,11 +33,26 @@ class Container:
         container_config['HostConfig'] = host_config
         return container_config
 
+    @staticmethod
+    def from_v1_config(container_folder: Path):
+        container_file = container_folder / "config.json"
+        with container_file.open() as file:
+            container_config = json.load(file)
+        host_file = container_folder / "hostconfig.json"
+        with host_file.open() as file:
+            host_config = json.load(file)
+        container_config['HostConfig'] = host_config
+        return container_config
+
+
     def mount_container_filesystem(self, mountpoint: Path) -> Path:
         """Tries to mount the container filesystem using the 'mount' command."""
+        if self.storage_driver != "overlay2":
+            raise NotImplementedError("Mounting container filesystems is only supported for overlay2 storage driver atm"
+                                     )
         command = ["mount", "-t", "overlay", "overlay", "-r", "-o",
-                   f"lowerdir={self.container_layer_lower_folders}:"
-                   f"{self.container_layer_upper_folder}",
+                   f"lowerdir={self.image_layer_folders}:"
+                   f"{self.container_layer_folder}",
                    str(mountpoint)]
         subprocess.check_call(command, cwd=str(self.storage_driver_folder))
         return mountpoint
@@ -81,15 +102,18 @@ class Container:
         return self.docker_home / self.storage_driver
 
     @property
-    def container_layer_upper_folder(self) -> Path:
-        return self.storage_driver_folder / self.container_layer_id / "diff"
+    def container_layer_folder(self) -> Path:
+        if self.storage_driver == "overlay2":
+            return self.storage_driver_folder / self.container_layer_id / "diff"
+        else:
+            return self.storage_driver_folder / "diff" / self.container_layer_id
 
     @property
     def container_layer_work_folder(self) -> Path:
         return self.storage_driver_folder / self.container_layer_id / "work"
 
     @property
-    def container_layer_lower_folders(self) -> str:
+    def image_layer_folders(self) -> str:
         with (self.storage_driver_folder / self.container_layer_id / "lower").open() as lower_file:
             return lower_file.read()
 
