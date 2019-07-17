@@ -30,7 +30,8 @@ class ListImagesCommand:
             return_value[image.repository_string].append({
                 'id': image.id,
                 'tags': ", ".join(image.tags) or "<none>",
-                'containers': ", ".join(containers) or "<none>"
+                'containers': ", ".join(containers) or "<none>",
+                'parent': image.parent_image
             })
         return return_value
 
@@ -41,6 +42,7 @@ class ListImagesCommand:
             for image in images_grouped_by_repository[repository_name]:
                 print("\tId:", image['id'])
                 print("\tTags:", image['tags'])
+                print("\tParent:", image['parent'])
                 print("\tContainers:", image['containers'])
                 print("")
             print("")

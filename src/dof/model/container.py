@@ -44,23 +44,23 @@ class Container:
         container_config['HostConfig'] = host_config
         return container_config
 
-    def mount_container_filesystem(self, mountpoint: Path) -> Path:
+    def mount_container_filesystem(self, container_mountpoint: Path, image_mountpoint: Path) -> Path:
         """Tries to mount the container filesystem using the 'mount' command."""
         if self.storage_driver != "overlay2":
             raise NotImplementedError("Mounting container filesystems is only supported for overlay2 storage driver")
         command = ["mount", "-t", "overlay", "overlay", "-r", "-o",
                    f"lowerdir={self.image_layer_folders}:"
                    f"{self.container_layer_folder}",
-                   str(mountpoint)]
+                   str(container_mountpoint)]
         subprocess.check_call(command, cwd=str(self.storage_driver_folder))
         for volume in self.volumes:
             if volume.source:
-                volume_dest = mountpoint / volume.destination[1:]
-                command = ["mount", "--bind", volume.source, str(volume_dest)]
+                volume_dest = container_mountpoint / volume.destination[1:]
+                command = ["mount", "--bind", str(image_mountpoint / volume.source[1:]), str(volume_dest)]
                 print(" ".join(command))
                 subprocess.check_call(command)
                 print(f"Mounted volume {volume.destination}")
-        return mountpoint
+        return container_mountpoint
 
     @property
     def id(self):

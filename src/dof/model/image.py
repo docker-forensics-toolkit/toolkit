@@ -28,5 +28,9 @@ class Image:
     def build_history(self):
         return self.config_file['history']
 
+    @property
+    def parent_image(self):
+        return self.config_file['config']['Image']
+
     def __eq__(self, other):
         return self.id == other.id

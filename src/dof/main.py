@@ -1,5 +1,6 @@
 import argparse
 import os
+from pathlib import Path
 
 import argcomplete
 import sys
@@ -15,6 +16,7 @@ from commands.list_images import run_list_images
 from commands.docker_host_status import run_status_command
 from commands.macrobber_volumes import run_macrobber_on_volumes
 from commands.show_container_logs import show_container_logfile
+from commands.show_image_config import run_show_image_config
 from commands.show_image_history import run_show_image_history
 
 __version__ = "0.2.0"
@@ -44,6 +46,7 @@ def add_subparsers(subparsers):
     add_status_command(subparsers)
     add_list_images_command(subparsers)
     add_show_image_history_command(subparsers)
+    add_show_image_config_command(subparsers)
     add_list_containers_command(subparsers)
     add_show_container_logfile_command(subparsers)
     add_dump_container_config_command(subparsers)
@@ -126,6 +129,16 @@ def add_show_image_history_command(subparsers):
     parser.set_defaults(func=run_show_image_history)
 
 
+def add_show_image_config_command(subparsers):
+    parser = subparsers.add_parser("show-image-config",
+                                   help="Pretty prints the full config file of an image")
+    parser.add_argument("--image",
+                        dest="image_tag_or_id",
+                        help="Tag or id of the image",
+                        required=True)
+    add_docker_home_and_mount_path_parameters(parser)
+    parser.set_defaults(func=run_show_image_config)
+
 def add_show_container_logfile_command(subparsers):
     parser = subparsers.add_parser("show-container-log",
                                    help="Displays the latest container logfiles")
@@ -166,15 +179,21 @@ def add_macrobber_volumes(subparsers):
 
 
 def add_docker_home_and_mount_path_parameters(parser):
-    parser.add_argument("image_mountpoint",
-                        action=ValidatePathAction,
-                        default=os.environ.get('DOF_IMAGE_MOUNTPOINT', None),
-                        help="The path where the forensic image was mounted."
-                             "the tool assumes /var/lib/docker/ is the docker home directory. "
-                             "Use the docker_home parameter if this is not the case.")
-    parser.add_argument("--docker_home",
-                        default="var/lib/docker",
-                        help="The path to the docker home folder (usually /var/lib/docker)", required=False)
+    environment_variable = os.environ.get("DOF_IMAGE_MOUNTPOINT", None)
+    if environment_variable:
+        docker_home = os.environ.get("DOF_DOCKER_HOME", None)
+        parser.set_defaults(image_mountpoint=Path(environment_variable))
+        parser.set_defaults(docker_home=Path("var/lib/docker") or Path(docker_home))
+    else:
+        parser.add_argument("image_mountpoint",
+                            action=ValidatePathAction,
+                            default=os.environ.get('DOF_IMAGE_MOUNTPOINT', None),
+                            help="The path where the forensic image was mounted."
+                                 "the tool assumes /var/lib/docker/ is the docker home directory. "
+                                 "Use the docker_home parameter if this is not the case.")
+        parser.add_argument("--docker_home",
+                            default="var/lib/docker",
+                            help="The path to the docker home folder (usually /var/lib/docker)", required=False)
 
 
 def add_carve_for_deleted_docker_files(subparsers):
