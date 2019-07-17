@@ -27,24 +27,35 @@ class Container:
     @staticmethod
     def from_v2_config(container_folder: Path):
         container_file = container_folder / "config.v2.json"
-        with container_file.open() as file:
-            container_config = json.load(file)
-        host_file = container_folder / "hostconfig.json"
-        with host_file.open() as file:
-            host_config = json.load(file)
+        container_config = Container.__read_container_config(container_file)
+        host_config = Container.__read_host_config(container_folder)
         container_config['HostConfig'] = host_config
         return container_config
+
 
     @staticmethod
     def from_v1_config(container_folder: Path):
         container_file = container_folder / "config.json"
-        with container_file.open() as file:
-            container_config = json.load(file)
-        host_file = container_folder / "hostconfig.json"
-        with host_file.open() as file:
-            host_config = json.load(file)
+        container_config = Container.__read_container_config(container_file)
+        host_config = Container.__read_host_config(container_folder)
         container_config['HostConfig'] = host_config
         return container_config
+
+    @staticmethod
+    def __read_container_config(container_file):
+        trace(f"Reading container config from: {str(container_file)}")
+        with container_file.open() as file:
+            container_config = json.load(file)
+        return container_config
+
+    @staticmethod
+    def __read_host_config(container_folder):
+        host_file = container_folder / "hostconfig.json"
+        trace(f"Reading container host config from: {str(host_file)}")
+        with host_file.open() as file:
+            host_config = json.load(file)
+        return host_config
+
 
     def mount_container_filesystem(self, container_mountpoint: Path, image_mountpoint: Path) -> Path:
         """Tries to mount the container filesystem using the 'mount' command."""

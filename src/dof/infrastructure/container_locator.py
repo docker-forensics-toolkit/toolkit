@@ -73,7 +73,6 @@ class ContainerLocator:
             config_file = Container.from_v2_config(container_folder)
             return Container(self.docker_home, config_file, ConfigVersion.Two)
         elif (container_folder / "config.json").exists():
-            trace(f"Reading container config from: {container_folder}")
             config_file = Container.from_v1_config(container_folder)
             return Container(self.docker_home, config_file, ConfigVersion.One)
         else:
