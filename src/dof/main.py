@@ -73,7 +73,8 @@ def add_mount_image_command(subparsers):
 
 def add_mount_container_command(subparsers):
     parser = subparsers.add_parser("mount-container",
-                                   help="Mounts the file system of a given container at the given location.")
+                                   help="Mounts the file system of a given container at the given location "
+                                        "(overlay2 only).")
     add_docker_home_and_mount_path_parameters(parser)
     parser.add_argument("--at-mountpoint",
                         action=ValidatePathAction,
@@ -163,7 +164,7 @@ def add_show_container_logfile_command(subparsers):
 
 def add_macrobber_container_layer(subparsers):
     parser = subparsers.add_parser("macrobber-container-layer",
-                                   help="Extracts file system metadata form the container layer of the given container"
+                                   help="Extracts file system metadata from the container layer of the given container"
                                         "Use the output with the 'mactime' tool to create a timeline.")
     parser.add_argument("--container",
                         dest="container_name_or_id",
@@ -175,7 +176,7 @@ def add_macrobber_container_layer(subparsers):
 
 def add_macrobber_volumes(subparsers):
     parser = subparsers.add_parser("macrobber-volumes",
-                                   help="Extracts file system metadata form the volumes of the given container"
+                                   help="Extracts file system metadata from the volumes of the given container"
                                         "Use the output with the 'mactime' tool to create a timeline.")
     parser.add_argument("--container",
                         dest="container_name_or_id",

@@ -9,15 +9,19 @@ runtime environments based on forensic HDD copies of the docker host system.
 
 ## Features
 
+* `mount-image` Mounts the forensic image of the docker host
+* `status` Prints status information about the container runtime
+* `list-images` Prints images found on the computer
+* `show-image-history` Displays the build history of an image
+* `show-image-config` Pretty prints the full config file of an image
+* `list-containers` Prints containers found on the computer
+* `show-container-log` Displays the latest container logfiles
+* `show-container-config` Pretty prints the combined container specific config files (config.v2.json and hostconfig.json).
+* `mount-container`     Mounts the file system of a given container at the given location (overlay2 only)
+* `macrobber-container-layer` Extracts file system metadata from the container layer of the given container. Use the output with the 'mactime' tool to create a timeline.
+* `macrobber-volumes` Extracts file system metadata from the volumes of the given container. Use the output with the 'mactime' tool to create a timeline.
+* `carve-for-deleted-docker-files` Carves the image for deleted Docker files, such as container configs,Dockerfiles and deleted log files. Requires 'scalpel' to be installed.
 
-
-* Mount a forensic image (courtesy of [the imagemounter library](https://github.com/ralphje/imagemounter))
-* List Containers and their settings
-* Mount a container file system (overlay2)
-* Show container log files
-* List Container images (overlay2)
-* Inspect build history of container images
-* Perform a timeline analysis of the container file system
 
 See [usage.md](USAGE.md) for a tour of the features.
 
