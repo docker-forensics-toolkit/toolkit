@@ -24,15 +24,7 @@ class ListImagesCommand:
     def _all_images_grouped_by_name(self) -> dict:
         return_value = defaultdict(list)
         for image in self.image_locator.all_images():
-            containers = []
-            for container in self.container_locator.containers_based_on_image_with_id(image.id):
-                containers.append(container.name or container.id)
-            return_value[image.repository_string].append({
-                'id': image.id,
-                'tags': ", ".join(image.tags) or "<none>",
-                'containers': ", ".join(containers) or "<none>",
-                'parent': image.parent_image
-            })
+            return_value[image.repository_string].append(image)
         return return_value
 
     def execute(self):
@@ -40,10 +32,9 @@ class ListImagesCommand:
         for repository_name in sorted(images_grouped_by_repository.keys()):
             print(f"Repository: {repository_name}")
             for image in images_grouped_by_repository[repository_name]:
-                print("\tId:", image['id'])
-                print("\tTags:", image['tags'])
-                print("\tParent:", image['parent'])
-                print("\tContainers:", image['containers'])
+                print("\tId:", image.id)
+                print("\tTags:", ",".join(image.tags)),
+                print("\tParent:", image.parent_image)
                 print("")
             print("")
 
