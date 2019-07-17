@@ -1,6 +1,8 @@
 import subprocess
 from pathlib import Path
 
+from infrastructure.logging import trace
+
 
 class DockerVersions:
     def __init__(self, docker_client_version: str, docker_daemon_version: str):
@@ -25,8 +27,12 @@ class DockerBinaries:
     def __extract_version_string(self, a_binary: Path):
         """Uses the command line tools 'strings' and 'grep' to extract a Docker Version number.
            This only matches the new version pattern Docker introduced in March 2017: Year.Month.Minor-Edition"""
-        p1 = subprocess.Popen(["strings", a_binary], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(["grep", "-E", self.__docker_version_number_pattern], stdin=p1.stdout,
+        strings_command = ["strings", str(a_binary)]
+        trace(f'Running: {" ".join(strings_command)}')
+        p1 = subprocess.Popen(strings_command, stdout=subprocess.PIPE)
+        grep_command = ["grep", "-E", self.__docker_version_number_pattern]
+        trace(f'Output piped to: {" ".join(grep_command)}')
+        p2 = subprocess.Popen(grep_command, stdin=p1.stdout,
                               stdout=subprocess.PIPE)
         p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
         communicate_ = p2.communicate()[0]

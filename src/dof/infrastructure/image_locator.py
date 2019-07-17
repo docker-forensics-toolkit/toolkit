@@ -1,7 +1,9 @@
 import json
+from functools import lru_cache
 from pathlib import Path
 from typing import List
 
+from infrastructure.logging import trace
 from model.image import Image
 
 
@@ -28,6 +30,7 @@ class ImageLocator:
     def repository_data_file(self) -> Path:
         return self.docker_home / "image" / self.driver / "repositories.json"
 
+    @lru_cache(maxsize=1)
     def all_images(self) -> List[Image]:
         """Returns all the images."""
         if not self.images_root_folder().exists():
@@ -66,10 +69,13 @@ class ImageLocator:
         return [file for file in self.images_root_folder().iterdir() if file.is_file()]
 
     def __image_from_file(self, image_config_file) -> Image:
+        trace(f"Reading image from {image_config_file}")
         image_tags, repository = self.__image_tags_and_name_from_repository_data(image_config_file.name)
         return Image(image_config_file.name, self.read_config_file(image_config_file), repository, image_tags)
 
+    @lru_cache(maxsize=1)
     def __repository_data(self) -> dict:
+        trace(f"Reading repository data from {self.repository_data_file()}")
         return self.read_config_file(self.repository_data_file())
 
     def __image_tags_and_name_from_repository_data(self, image_id: str) -> ([str], str):

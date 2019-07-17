@@ -1,7 +1,8 @@
+from functools import lru_cache
 from pathlib import Path
 from typing import List
 from model.container import Container, ConfigVersion
-from infrastructure.logging import warn
+from infrastructure.logging import warn, trace
 
 
 class ContainerLocator:
@@ -45,6 +46,7 @@ class ContainerLocator:
             raise RuntimeError(f"Containers folder does not exist at: {str(self.container_root_folder())}. "
                                + "Are you sure this is a Docker Host?")
 
+    @lru_cache(maxsize=1)
     def all_containers(self) -> List[Container]:
         """Gets all containers from the container root folder"""
         self._check_containers_folder()
@@ -67,9 +69,11 @@ class ContainerLocator:
     def __container_from_folder(self, container_folder: Path) -> Container:
         """Constructs a container object from the given folders metadatata """
         if (container_folder / "config.v2.json").exists():
+            trace(f"Reading container config from: {container_folder}")
             config_file = Container.from_v2_config(container_folder)
             return Container(self.docker_home, config_file, ConfigVersion.Two)
         elif (container_folder / "config.json").exists():
+            trace(f"Reading container config from: {container_folder}")
             config_file = Container.from_v1_config(container_folder)
             return Container(self.docker_home, config_file, ConfigVersion.One)
         else:

@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 
 import argcomplete
-import sys
 
 from arguments import ValidatePathAction
 from commands.carve_for_deleted_docker_files import run_carve_for_deleted_docker_files
@@ -18,22 +17,29 @@ from commands.macrobber_volumes import run_macrobber_on_volumes
 from commands.show_container_logs import show_container_logfile
 from commands.show_image_config import run_show_image_config
 from commands.show_image_history import run_show_image_history
+from infrastructure import logging
 
 __version__ = "0.2.0"
 
 
 def select_command_and_run():
-    disable_stacktrace_on_exceptions_unless_debug_argument_is_set(debug=False)
     parser = argparse.ArgumentParser(description='Toolkit for the forensic post-mortem analysis of Docker host systems')
     parser.add_argument("-V", "--version",
                         action='version',
                         help="Print version number and exit",
                         version=f"%(prog)s v{__version__}")
+    parser.add_argument('-v', action='count', default=0)
     subparsers = parser.add_subparsers(title="operation",
                                        description="one of the following operations",
                                        help="start with <operation> help for more info about an operation")
     add_subparsers(subparsers)
     args = parser.parse_args()
+    if args.v >= 1:
+        logging.trace_enabled = True
+        logging.disable_stacktrace_on_exceptions(True)
+    else:
+        logging.trace_enabled = False
+        logging.disable_stacktrace_on_exceptions(False)
     argcomplete.autocomplete(parser)
     if hasattr(args, 'func'):
         args.func(args)
@@ -139,6 +145,7 @@ def add_show_image_config_command(subparsers):
     add_docker_home_and_mount_path_parameters(parser)
     parser.set_defaults(func=run_show_image_config)
 
+
 def add_show_container_logfile_command(subparsers):
     parser = subparsers.add_parser("show-container-log",
                                    help="Displays the latest container logfiles")
@@ -205,10 +212,6 @@ def add_carve_for_deleted_docker_files(subparsers):
                         help="Path of the forensic image")
     parser.set_defaults(func=run_carve_for_deleted_docker_files)
 
-
-def disable_stacktrace_on_exceptions_unless_debug_argument_is_set(debug):
-    if not debug:
-        sys.tracebacklimit = 0
 
 
 if __name__ == "__main__":

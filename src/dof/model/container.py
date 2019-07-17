@@ -5,6 +5,8 @@ from pathlib import Path
 import subprocess
 from typing import List
 
+from infrastructure.logging import trace
+
 Volume = collections.namedtuple('Volume', 'source destination')
 
 
@@ -52,12 +54,13 @@ class Container:
                    f"lowerdir={self.image_layer_folders}:"
                    f"{self.container_layer_folder}",
                    str(container_mountpoint)]
+        trace(f'Running: {" ".join(command)}')
         subprocess.check_call(command, cwd=str(self.storage_driver_folder))
         for volume in self.volumes:
             if volume.source:
                 volume_dest = container_mountpoint / volume.destination[1:]
                 command = ["mount", "--bind", str(image_mountpoint / volume.source[1:]), str(volume_dest)]
-                print(" ".join(command))
+                trace(f'Running: {" ".join(command)}')
                 subprocess.check_call(command)
                 print(f"Mounted volume {volume.destination}")
         return container_mountpoint
