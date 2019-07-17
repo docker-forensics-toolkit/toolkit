@@ -21,7 +21,7 @@ __version__ = "0.2.0"
 
 
 def select_command_and_run():
-    disable_stacktrace_on_exceptions_unless_debug_argument_is_set(debug=True)
+    disable_stacktrace_on_exceptions_unless_debug_argument_is_set(debug=False)
     parser = argparse.ArgumentParser(description='Toolkit for the forensic post-mortem analysis of Docker host systems')
     parser.add_argument("-V", "--version",
                         action='version',
@@ -39,16 +39,15 @@ def select_command_and_run():
         parser.print_help()
 
 
-
 def add_subparsers(subparsers):
     add_mount_image_command(subparsers)
-    add_mount_container_command(subparsers)
     add_status_command(subparsers)
     add_list_images_command(subparsers)
+    add_show_image_history_command(subparsers)
     add_list_containers_command(subparsers)
     add_show_container_logfile_command(subparsers)
     add_dump_container_config_command(subparsers)
-    add_show_image_history_command(subparsers)
+    add_mount_container_command(subparsers)
     add_macrobber_container_layer(subparsers)
     add_macrobber_volumes(subparsers)
     add_carve_for_deleted_docker_files(subparsers)
