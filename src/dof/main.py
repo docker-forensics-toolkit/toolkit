@@ -21,7 +21,7 @@ __version__ = "0.1.0"
 
 
 def select_command_and_run():
-    disable_stacktrace_on_exceptions_unless_debug_argument_is_set(debug=False)
+    disable_stacktrace_on_exceptions_unless_debug_argument_is_set(debug=True)
     parser = argparse.ArgumentParser(description='Toolkit for the forensic post-mortem analysis of Docker host systems')
     parser.add_argument("-V", "--version",
                         action='version',

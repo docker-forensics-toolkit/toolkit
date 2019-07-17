@@ -44,17 +44,22 @@ class Container:
         container_config['HostConfig'] = host_config
         return container_config
 
-
     def mount_container_filesystem(self, mountpoint: Path) -> Path:
         """Tries to mount the container filesystem using the 'mount' command."""
         if self.storage_driver != "overlay2":
-            raise NotImplementedError("Mounting container filesystems is only supported for overlay2 storage driver atm"
-                                     )
+            raise NotImplementedError("Mounting container filesystems is only supported for overlay2 storage driver")
         command = ["mount", "-t", "overlay", "overlay", "-r", "-o",
                    f"lowerdir={self.image_layer_folders}:"
                    f"{self.container_layer_folder}",
                    str(mountpoint)]
         subprocess.check_call(command, cwd=str(self.storage_driver_folder))
+        for volume in self.volumes:
+            if volume.source:
+                volume_dest = mountpoint / volume.destination[1:]
+                command = ["mount", "--bind", volume.source, str(volume_dest)]
+                print(" ".join(command))
+                subprocess.check_call(command)
+                print(f"Mounted volume {volume.destination}")
         return mountpoint
 
     @property
@@ -151,9 +156,12 @@ class Container:
 
     def ports_to_string(self) -> str:
         string = ""
-        for key, value in self.ports.items():
-            string += key
+        for container_port, host_port_list in self.ports.items():
+            if not host_port_list:
+                string += "<none>"
+            else:
+                for mapping in host_port_list:
+                    string += f"{mapping['HostIp']}:{mapping['HostPort']}"
             string += "->"
-            string += value or "<none>"
+            string += container_port
         return string
-

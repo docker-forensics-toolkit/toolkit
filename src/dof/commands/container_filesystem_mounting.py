@@ -16,7 +16,7 @@ def run_mount_container_command(args, image_mountpoint: Path, docker_home: Path)
 
     container = container_locator.container_by_name_or_id(container_name_or_id)
 
-    mount_point = container.mount_container_filesystem(container_fs_mountpoint)
+    mount_point = container.mount_container_filesystem(Path(container_fs_mountpoint))
     info(f"Mounted container {container_name_or_id} at {highlight(mount_point)}")
 
 
