@@ -40,6 +40,12 @@ The output will look like this:
     2 total containers found on this machine
     7 images found on this machine
     3 images belong to no repository
+
+Hint: instead of specifying the mountpoint over and over again, you can also set it as an environment variable to `DOF_IMAGE_MOUNTPOINT`:
+    
+    export DOF_IMAGE_MOUNTPOINT=/tmp/packer-virtualbox-iso-1563040605-disk001.vmdk-4-root/usr/bin/docker
+    
+However, you will need to use `sudo -E` if you want this variable to be available in the sudo environment.
    
 ## Containers
 
