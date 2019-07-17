@@ -17,7 +17,7 @@ from commands.macrobber_volumes import run_macrobber_on_volumes
 from commands.show_container_logs import show_container_logfile
 from commands.show_image_history import run_show_image_history
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 def select_command_and_run():
