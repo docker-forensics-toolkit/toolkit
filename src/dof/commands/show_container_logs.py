@@ -14,7 +14,10 @@ def show_container_logfile(args, image_mountpoint: Path, docker_home: Path):
 
     container_locator = ContainerLocator(docker_home)
     container = container_locator.container_by_name_or_id(container_name_or_id)
-    logfile = container.get_path_to_logfile(image_mountpoint)
+    if container.logging_driver() in ["local", "json-file"]:
+        logfile = container.get_path_to_logfile(image_mountpoint)
+        trace(f"Opening file {logfile}")
+        subprocess.check_call([editor, logfile])
+    else:
+        raise Exception(f"This container uses an unsupported logging driver: {container.logging_driver()}")
 
-    trace(f"Opening file {logfile}")
-    subprocess.check_call([editor, logfile])

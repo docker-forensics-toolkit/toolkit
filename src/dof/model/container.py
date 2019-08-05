@@ -141,8 +141,11 @@ class Container:
         return self.docker_home / "image" / self.storage_driver / "layerdb" / "mounts" / self.id / "mount-id"
 
     def get_path_to_logfile(self, image_mountpoint: Path) -> Path:
-        relative_logfile_path = self.config_file['LogPath'][1:]
-        return image_mountpoint / relative_logfile_path
+        if self.logging_driver() == "json-file":
+            relative_logfile_path = self.config_file['LogPath'][1:]
+            return image_mountpoint / relative_logfile_path
+        elif self.logging_driver() == "local":
+            return self.container_folder / "local-logs" / "container.log"
 
     @property
     def storage_driver(self) -> str:
@@ -179,3 +182,7 @@ class Container:
             string += "->"
             string += container_port
         return string
+
+    def logging_driver(self) -> str:
+        return self.config_file["HostConfig"]["LogConfig"]["Type"]
+

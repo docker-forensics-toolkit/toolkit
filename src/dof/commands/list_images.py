@@ -32,10 +32,11 @@ class ListImagesCommand:
         for repository_name in sorted(images_grouped_by_repository.keys()):
             print(f"Repository: {repository_name}")
             for image in images_grouped_by_repository[repository_name]:
+                container_names = [container.name for container in image.used_in_containers(self.container_locator)]
                 print("\tId:", image.id)
-                print("\tTags:", ",".join(image.tags)),
+                print("\tTags:", ",".join(image.tags) if image.tags else "<none>"),
                 print("\tParent:", image.parent_image)
-                print("")
+                print("\tContainer:", ",".join(container_names) if container_names else "<none>")
             print("")
 
 
