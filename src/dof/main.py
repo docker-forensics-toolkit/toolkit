@@ -22,7 +22,7 @@ from infrastructure import logging
 __version__ = "0.2.0"
 
 
-def select_command_and_run():
+def select_command_and_run(argv):
     parser = argparse.ArgumentParser(description='Toolkit for the forensic post-mortem analysis of Docker host systems')
     parser.add_argument("-V", "--version",
                         action='version',
@@ -33,7 +33,7 @@ def select_command_and_run():
                                        description="one of the following operations",
                                        help="start with <operation> help for more info about an operation")
     add_subparsers(subparsers)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.v >= 1:
         logging.trace_enabled = True
         logging.disable_stacktrace_on_exceptions(True)
@@ -216,4 +216,4 @@ def add_carve_for_deleted_docker_files(subparsers):
 
 
 if __name__ == "__main__":
-    select_command_and_run()
+    select_command_and_run(sys.argv)
