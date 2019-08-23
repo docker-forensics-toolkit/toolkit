@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 
 from commands.docker_host_status import run_status_command
+from stubs import ArgumentsStub
 
 ANSI_ESCAPE_CHARACTERS_REGEX = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]')
 
@@ -20,18 +21,6 @@ def test_docker_host_status(image_mountpoint: Path, capsys):
     assert lines[4] == "2 images found on this machine"
     assert lines[5] == "0 images belong to no repository"
 
-
-class ArgumentsStub:
-    def __init__(self, image_mountpoint: Path):
-        self._image_mountpoint = image_mountpoint
-
-    @property
-    def image_mountpoint(self):
-        return self._image_mountpoint
-
-    @property
-    def docker_home(self):
-        return self.image_mountpoint / "var" / "lib" / "docker"
 
 
 def strip_ansi_escapes(line):

@@ -9,7 +9,6 @@ from infrastructure.image_locator import ImageLocator
 @requires_root
 @requires_docker_home_argument
 def run_list_images(args, image_mountpoint: Path,  docker_home: Path):
-    # TODO: Write a test for this
     image_locator = ImageLocator(docker_home)
     container_locator = ContainerLocator(docker_home)
     ListImagesCommand(image_locator, container_locator).execute()
