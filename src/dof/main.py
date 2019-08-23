@@ -4,7 +4,7 @@ from pathlib import Path
 
 import argcomplete
 
-from arguments import ValidatePathAction
+from argparse_actions import ValidatePathAction
 from commands.carve_for_deleted_docker_files import run_carve_for_deleted_docker_files
 from commands.dump_container_config import run_dump_container_config
 from commands.macrobber_container_layer import run_macrobber_container_layer

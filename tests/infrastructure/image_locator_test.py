@@ -26,6 +26,13 @@ def test_locating_images_by_tag(docker_home: Path):
 
     assert "mysql:8.0.16" in image.tags
 
+def test_image_history(docker_home: Path):
+    image_locator = ImageLocator(docker_home)
+
+    image = image_locator.image_by_tag("mysql:8.0.16")
+
+    assert len(image.build_history) == 20
+
 
 def test_locating_images_by_tag_fails(docker_home: Path):
     image_locator = ImageLocator(docker_home)

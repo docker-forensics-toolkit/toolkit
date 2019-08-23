@@ -13,5 +13,3 @@ class ValidatePathAction(argparse.Action):
         if not path.exists():
             raise argparse.ArgumentError(None, f"The {self.dest} does not exist: {value}")
         setattr(namespace, self.dest, path)
-
-
