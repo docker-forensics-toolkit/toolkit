@@ -73,10 +73,9 @@ class ContainerLocator:
             config_file = Container.from_v2_config(container_folder)
             return Container(self.docker_home, config_file, ConfigVersion.Two)
         elif (container_folder / "config.json").exists():
-            config_file = Container.from_v1_config(container_folder)
-            return Container(self.docker_home, config_file, ConfigVersion.One)
+            raise NotImplemented("Docker Versions prior to 17.06 are note supported.")
         else:
-            raise RuntimeError("Unknown version of container config encountered.")
+            raise RuntimeError("No or unknown version of container config encountered.")
 
     def __all_container_folders(self) -> List[Path]:
         """Returns a list of folders that contain container metadata."""

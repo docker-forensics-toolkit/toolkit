@@ -34,14 +34,6 @@ class Container:
 
 
     @staticmethod
-    def from_v1_config(container_folder: Path):
-        container_file = container_folder / "config.json"
-        container_config = Container.__read_container_config(container_file)
-        host_config = Container.__read_host_config(container_folder)
-        container_config['HostConfig'] = host_config
-        return container_config
-
-    @staticmethod
     def __read_container_config(container_file):
         trace(f"Reading container config from: {str(container_file)}")
         with container_file.open() as file:
@@ -55,7 +47,6 @@ class Container:
         with host_file.open() as file:
             host_config = json.load(file)
         return host_config
-
 
     def mount_container_filesystem(self, container_mountpoint: Path, image_mountpoint: Path) -> Path:
         """Tries to mount the container filesystem using the 'mount' command."""
@@ -124,8 +115,10 @@ class Container:
     def container_layer_folder(self) -> Path:
         if self.storage_driver == "overlay2":
             return self.storage_driver_folder / self.container_layer_id / "diff"
-        else:
+        elif self.storage_driver == "aufs":
             return self.storage_driver_folder / "diff" / self.container_layer_id
+        else:
+            raise NotImplemented(f"Unsupported storage driver {self.storage_driver}")
 
     @property
     def container_layer_work_folder(self) -> Path:
