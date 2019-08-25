@@ -42,7 +42,13 @@ image (created by running the `create_zipfile_from_testimage.py` script. For
 local development it's recommended to use the first way while CI may use the
 latter.
 
-# Testing with a real Docker Host Image
+### Coverage
+
+For a code coverage report run:
+
+    pytest --cov-report term-missing --cov=src tests/
+
+### Testing with a real Docker Host Image
 
 1. Mount the Docker Host image by running:
     
