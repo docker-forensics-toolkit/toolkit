@@ -17,8 +17,8 @@ class DockerBinariesLocator:
 
     def find_docker_binaries(self) -> DockerBinaries:
         """"Looks for the 'docker' binary in typical binary directories such as: /usr/bin and /usr/local/bin"""
-        client_path = "Not found!"
-        daemon_path = "Not found!"
+        client_path = None
+        daemon_path = None
         for possible_path in self.__common_binary_locations:
             if (self.__image_mountpoint / possible_path / "docker").exists():
                 client_path = possible_path / "docker"

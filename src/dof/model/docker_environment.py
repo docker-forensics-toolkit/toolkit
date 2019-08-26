@@ -19,7 +19,11 @@ class DockerBinaries:
     __docker_version_number_pattern = r"^[[:digit:]]{2}\.[[:digit:]]{2}\.[[:digit:]]*\-[[:alpha:]]{2}$"
 
     def extract_docker_version(self) -> DockerVersions:
-        return DockerVersions(self.__extract_version_string(self.absolute_docker_client_path),
+        if self.relative_docker_client_path:
+            client_version = self.__extract_version_string(self.absolute_docker_client_path)
+        else:
+            client_version = "Unknown"
+        return DockerVersions(client_version,
                               "Unknown")
         # TODO: For some reason there doesn't seem to be a version string in the daemon executable, find another way
         # to extract the version?
@@ -41,5 +45,8 @@ class DockerBinaries:
 
     @property
     def absolute_docker_client_path(self):
-        return self.image_mountpoint / self.relative_docker_client_path
+        if self.relative_docker_client_path:
+            return self.image_mountpoint / self.relative_docker_client_path
+        else:
+            return None
 

@@ -216,4 +216,4 @@ def add_carve_for_deleted_docker_files(subparsers):
 
 
 if __name__ == "__main__":
-    select_command_and_run(sys.argv)
+    select_command_and_run(sys.argv[1:])
