@@ -60,7 +60,7 @@ class ContainerLocator:
     def not_running_containers(self) -> List[Container]:
         """Gets all containers that are not in a Runing state"""
         self._check_containers_folder()
-        return [container for container in self.all_containers() if container.state is not "running"]
+        return [container for container in self.all_containers() if container.state != "running"]
 
     def container_root_folder(self) -> Path:
         """Returns the folder where docker keeps container data"""
