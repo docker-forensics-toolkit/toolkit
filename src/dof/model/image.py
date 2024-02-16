@@ -32,7 +32,7 @@ class Image:
 
     @property
     def parent_image(self):
-        return self.config_file['config']['Image']
+        return self.config_file['config'].get('Image')
 
     def used_in_containers(self, container_locator: ContainerLocator):
         return container_locator.containers_based_on_image_with_id(self.id)
